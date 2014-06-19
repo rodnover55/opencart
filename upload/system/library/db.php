@@ -31,5 +31,9 @@ class DB {
 	public function getLastId() {
 		return $this->driver->getLastId();
 	}
+
+    public function table($table) {
+        return DB_PREFIX . $table;
+    }
 }
 ?>
