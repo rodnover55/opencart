@@ -2,6 +2,7 @@
 /upload/.htaccess
 /upload/config.php
 /upload/admin/config.php
+/upload/cli/config.php
 
 # System Cache Files
 /upload/system/cache/*
@@ -35,4 +36,3 @@
 # If you want to ignore install file use following lines [on development mode]
 # /upload/backup.install/*
 # /upload/install/*
-

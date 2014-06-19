@@ -238,7 +238,7 @@ function write_config_files($options) {
 	$output .= 'define(\'DIR_LOGS\', \'' . DIR_OPENCART . 'system/logs/\');' . "\n\n";
 
 	$output .= '// DB' . "\n";
-	$output .= 'define(\'DB_DRIVER\', \'mysql\');' . "\n";
+	$output .= 'define(\'DB_DRIVER\', \'' . addslashes($options['db_driver']) . '\');' . "\n";
 	$output .= 'define(\'DB_HOSTNAME\', \'' . addslashes($options['db_host']) . '\');' . "\n";
 	$output .= 'define(\'DB_USERNAME\', \'' . addslashes($options['db_user']) . '\');' . "\n";
 	$output .= 'define(\'DB_PASSWORD\', \'' . addslashes($options['db_password']) . '\');' . "\n";
@@ -277,7 +277,7 @@ function write_config_files($options) {
 	$output .= 'define(\'DIR_CATALOG\', \'' . DIR_OPENCART . 'catalog/\');' . "\n\n";
 
 	$output .= '// DB' . "\n";
-	$output .= 'define(\'DB_DRIVER\', \'mysql\');' . "\n";
+	$output .= 'define(\'DB_DRIVER\', \'' . addslashes($options['db_driver']) . '\');' . "\n";
 	$output .= 'define(\'DB_HOSTNAME\', \'' . addslashes($options['db_host']) . '\');' . "\n";
 	$output .= 'define(\'DB_USERNAME\', \'' . addslashes($options['db_user']) . '\');' . "\n";
 	$output .= 'define(\'DB_PASSWORD\', \'' . addslashes($options['db_password']) . '\');' . "\n";
@@ -290,6 +290,23 @@ function write_config_files($options) {
 	fwrite($file, $output);
 
 	fclose($file);
+
+    if (file_exists('cli/config-dist.php')) {
+        $replaces = array(
+            '{http_server}' => $options['http_server'],
+            '{sql_driver}' => addslashes($options['db_driver']),
+            '{sql_host}' => addslashes($options['db_host']),
+            '{sql_user}' => addslashes($options['db_user']),
+            '{sql_password}' => addslashes($options['db_password']),
+            '{sql_database}' => addslashes($options['db_name']),
+            '{sql_prefix}' => addslashes($options['db_prefix'])
+        );
+
+        $output = file_get_contents(DIR_OPENCART . 'cli/config-dist.php');
+        $output = str_replace(array_keys($replaces), array_values($replaces), $output);
+        file_put_contents(DIR_OPENCART . 'cli/config.php', $output);
+    }
+
 }
 
 
