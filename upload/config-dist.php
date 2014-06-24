@@ -17,7 +17,7 @@ define('DIR_DATABASE', ROOT . '/system/database/');
 define('DIR_LANGUAGE', ROOT . '/catalog/language/');
 define('DIR_TEMPLATE', ROOT . '/catalog/view/theme/');
 define('DIR_CONFIG', ROOT . '/system/config/');
-define('DIR_IMAGE', ROOT . '/opencart/image/');
+define('DIR_IMAGE', ROOT . '/image/');
 define('DIR_CACHE', ROOT . '/system/cache/');
 define('DIR_DOWNLOAD', ROOT . '/download/');
 define('DIR_LOGS', ROOT . '/system/logs/');
