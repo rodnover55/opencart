@@ -5,7 +5,7 @@ define('HTTP_SERVER', '{http_server}');
 define('HTTP_CATALOG', '{http_server}');
 
 // HTTPS
-define('HTTPS_SERVER', '{https_server');
+define('HTTPS_SERVER', '{http_server}');
 define('HTTPS_CATALOG', '{http_server}');
 
 // DIR

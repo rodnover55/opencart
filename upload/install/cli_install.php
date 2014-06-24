@@ -170,13 +170,13 @@ function check_requirements() {
 		$error = 'Warning: ZLIB extension needs to be loaded for OpenCart to work!';
 	}
 
-	if (!is_writable(DIR_OPENCART . 'config.php')) {
-		$error = 'Warning: config.php needs to be writable for OpenCart to be installed!';
-	}
-
-	if (!is_writable(DIR_OPENCART . 'admin/config.php')) {
-		$error = 'Warning: admin/config.php needs to be writable for OpenCart to be installed!';
-	}
+//	if (!is_writable(DIR_OPENCART . 'config.php')) {
+//		$error = 'Warning: config.php needs to be writable for OpenCart to be installed!';
+//	}
+//
+//	if (!is_writable(DIR_OPENCART . 'admin/config.php')) {
+//		$error = 'Warning: admin/config.php needs to be writable for OpenCart to be installed!';
+//	}
 
 	if (!is_writable(DIR_SYSTEM . 'cache')) {
 		$error = 'Warning: Cache directory needs to be writable for OpenCart to work!';
@@ -215,98 +215,27 @@ function setup_mysql($dbdata) {
 
 
 function write_config_files($options) {
-	$output  = '<?php' . "\n";
-	$output .= '// HTTP' . "\n";
-	$output .= 'define(\'HTTP_SERVER\', \'' . $options['http_server'] . '\');' . "\n";
-	$output .= 'define(\'HTTP_IMAGE\', \'' . $options['http_server'] . 'image/\');' . "\n";
-	$output .= 'define(\'HTTP_ADMIN\', \'' . $options['http_server'] . 'admin/\');' . "\n\n";
+    $replaces = array(
+        '{http_server}' => $options['http_server'],
+        '{sql_driver}' => addslashes($options['db_driver']),
+        '{sql_host}' => addslashes($options['db_host']),
+        '{sql_user}' => addslashes($options['db_user']),
+        '{sql_password}' => addslashes($options['db_password']),
+        '{sql_database}' => addslashes($options['db_name']),
+        '{sql_prefix}' => addslashes($options['db_prefix'])
+    );
+    $configFiles = array(
+        'config-dist.php' => 'config.php',
+        'cli/config-dist.php' => 'cli/config.php',
+        'admin/config-dist.php' => 'admin/config.php');
 
-	$output .= '// HTTPS' . "\n";
-	$output .= 'define(\'HTTPS_SERVER\', \'' . $options['http_server'] . '\');' . "\n";
-	$output .= 'define(\'HTTPS_IMAGE\', \'' . $options['http_server'] . 'image/\');' . "\n\n";
-
-	$output .= '// DIR' . "\n";
-	$output .= 'define(\'DIR_APPLICATION\', \'' . DIR_OPENCART . 'catalog/\');' . "\n";
-	$output .= 'define(\'DIR_SYSTEM\', \'' . DIR_OPENCART. 'system/\');' . "\n";
-	$output .= 'define(\'DIR_DATABASE\', \'' . DIR_OPENCART . 'system/database/\');' . "\n";
-	$output .= 'define(\'DIR_LANGUAGE\', \'' . DIR_OPENCART . 'catalog/language/\');' . "\n";
-	$output .= 'define(\'DIR_TEMPLATE\', \'' . DIR_OPENCART . 'catalog/view/theme/\');' . "\n";
-	$output .= 'define(\'DIR_CONFIG\', \'' . DIR_OPENCART . 'system/config/\');' . "\n";
-	$output .= 'define(\'DIR_IMAGE\', \'' . DIR_OPENCART . 'image/\');' . "\n";
-	$output .= 'define(\'DIR_CACHE\', \'' . DIR_OPENCART . 'system/cache/\');' . "\n";
-	$output .= 'define(\'DIR_DOWNLOAD\', \'' . DIR_OPENCART . 'download/\');' . "\n";
-	$output .= 'define(\'DIR_LOGS\', \'' . DIR_OPENCART . 'system/logs/\');' . "\n\n";
-
-	$output .= '// DB' . "\n";
-	$output .= 'define(\'DB_DRIVER\', \'' . addslashes($options['db_driver']) . '\');' . "\n";
-	$output .= 'define(\'DB_HOSTNAME\', \'' . addslashes($options['db_host']) . '\');' . "\n";
-	$output .= 'define(\'DB_USERNAME\', \'' . addslashes($options['db_user']) . '\');' . "\n";
-	$output .= 'define(\'DB_PASSWORD\', \'' . addslashes($options['db_password']) . '\');' . "\n";
-	$output .= 'define(\'DB_DATABASE\', \'' . addslashes($options['db_name']) . '\');' . "\n";
-	$output .= 'define(\'DB_PREFIX\', \'' . addslashes($options['db_prefix']) . '\');' . "\n";
-	$output .= '?>';
-
-	$file = fopen(DIR_OPENCART . 'config.php', 'w');
-
-	fwrite($file, $output);
-
-	fclose($file);
-
-	$output  = '<?php' . "\n";
-	$output .= '// HTTP' . "\n";
-	$output .= 'define(\'HTTP_SERVER\', \'' . $options['http_server'] . 'admin/\');' . "\n";
-	$output .= 'define(\'HTTP_CATALOG\', \'' . $options['http_server'] . '\');' . "\n";
-	$output .= 'define(\'HTTP_IMAGE\', \'' . $options['http_server'] . 'image/\');' . "\n\n";
-
-	$output .= '// HTTPS' . "\n";
-	$output .= 'define(\'HTTPS_SERVER\', \'' . $options['http_server'] . 'admin/\');' . "\n";
-	$output .= 'define(\'HTTPS_CATALOG\', \'' . $options['http_server'] . '\');' . "\n";
-	$output .= 'define(\'HTTPS_IMAGE\', \'' . $options['http_server'] . 'image/\');' . "\n\n";
-
-	$output .= '// DIR' . "\n";
-	$output .= 'define(\'DIR_APPLICATION\', \'' . DIR_OPENCART . 'admin/\');' . "\n";
-	$output .= 'define(\'DIR_SYSTEM\', \'' . DIR_OPENCART . 'system/\');' . "\n";
-	$output .= 'define(\'DIR_DATABASE\', \'' . DIR_OPENCART . 'system/database/\');' . "\n";
-	$output .= 'define(\'DIR_LANGUAGE\', \'' . DIR_OPENCART . 'admin/language/\');' . "\n";
-	$output .= 'define(\'DIR_TEMPLATE\', \'' . DIR_OPENCART . 'admin/view/template/\');' . "\n";
-	$output .= 'define(\'DIR_CONFIG\', \'' . DIR_OPENCART . 'system/config/\');' . "\n";
-	$output .= 'define(\'DIR_IMAGE\', \'' . DIR_OPENCART . 'image/\');' . "\n";
-	$output .= 'define(\'DIR_CACHE\', \'' . DIR_OPENCART . 'system/cache/\');' . "\n";
-	$output .= 'define(\'DIR_DOWNLOAD\', \'' . DIR_OPENCART . 'download/\');' . "\n";
-	$output .= 'define(\'DIR_LOGS\', \'' . DIR_OPENCART . 'system/logs/\');' . "\n";
-	$output .= 'define(\'DIR_CATALOG\', \'' . DIR_OPENCART . 'catalog/\');' . "\n\n";
-
-	$output .= '// DB' . "\n";
-	$output .= 'define(\'DB_DRIVER\', \'' . addslashes($options['db_driver']) . '\');' . "\n";
-	$output .= 'define(\'DB_HOSTNAME\', \'' . addslashes($options['db_host']) . '\');' . "\n";
-	$output .= 'define(\'DB_USERNAME\', \'' . addslashes($options['db_user']) . '\');' . "\n";
-	$output .= 'define(\'DB_PASSWORD\', \'' . addslashes($options['db_password']) . '\');' . "\n";
-	$output .= 'define(\'DB_DATABASE\', \'' . addslashes($options['db_name']) . '\');' . "\n";
-	$output .= 'define(\'DB_PREFIX\', \'' . addslashes($options['db_prefix']) . '\');' . "\n";
-	$output .= '?>';
-
-	$file = fopen(DIR_OPENCART . 'admin/config.php', 'w');
-
-	fwrite($file, $output);
-
-	fclose($file);
-
-    if (file_exists('cli/config-dist.php')) {
-        $replaces = array(
-            '{http_server}' => $options['http_server'],
-            '{sql_driver}' => addslashes($options['db_driver']),
-            '{sql_host}' => addslashes($options['db_host']),
-            '{sql_user}' => addslashes($options['db_user']),
-            '{sql_password}' => addslashes($options['db_password']),
-            '{sql_database}' => addslashes($options['db_name']),
-            '{sql_prefix}' => addslashes($options['db_prefix'])
-        );
-
-        $output = file_get_contents(DIR_OPENCART . 'cli/config-dist.php');
-        $output = str_replace(array_keys($replaces), array_values($replaces), $output);
-        file_put_contents(DIR_OPENCART . 'cli/config.php', $output);
+    foreach ($configFiles as $tmpl => $config) {
+        if (file_exists($tmpl)) {
+            $output = file_get_contents(DIR_OPENCART . $tmpl);
+            $output = str_replace(array_keys($replaces), array_values($replaces), $output);
+            file_put_contents(DIR_OPENCART . $config, $output);
+        }
     }
-
 }
 
 
